@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Memory-Care NE</title>
+<style>
+:root{--bg:#f4f1ea;--ink:#16262e;--mute:#4a5b62;--line:#ddd7ca;--pri:#0f5c63;--pri2:#0b464c;--soft:#e2f0ee;--sun:#f2b134;--bad:#b3312b;--ok:#1d7a46;--r:24px;--sh:0 1px 2px rgba(22,38,46,.06),0 10px 28px rgba(22,38,46,.09)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;color:var(--ink);font:19px/1.55 'Atkinson Hyperlegible',Verdana,sans-serif;padding-bottom:110px;background:radial-gradient(900px 420px at 90% -8%,#d5e8e4,transparent 65%),radial-gradient(700px 380px at -5% 12%,#fbe9c4,transparent 60%),var(--bg)}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;margin:0;letter-spacing:-.01em}h2{font-size:1.4rem;margin-bottom:12px}h3{font-size:1.05rem;margin:14px 0 6px}
+.top{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:14px clamp(14px,4vw,32px)}
+.brand{display:flex;gap:12px;align-items:center}.brand svg{width:46px;height:46px;flex:none}.brand h1{font-size:1.5rem;line-height:1.1}.brand small{color:var(--mute);font-size:.8rem;display:block}
+.tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.chip{font-size:.75rem;font-weight:700;padding:3px 11px 3px 24px;border-radius:99px;background:#fff;border:1.5px solid var(--line);position:relative}
+.chip::before{content:"";position:absolute;left:9px;top:50%;width:9px;height:9px;margin-top:-4.5px;border-radius:50%;background:var(--bad)}.chip.g::before{background:var(--ok)}
+select,input,textarea{font:inherit;color:var(--ink);background:#fff;border:2px solid var(--line);border-radius:14px;padding:10px 14px}
+button{font:inherit;cursor:pointer;min-height:54px;padding:10px 22px;border-radius:16px;border:2px solid var(--pri);background:var(--pri);color:#fff;font-weight:700;transition:transform .12s,box-shadow .12s,background .12s}
+button:hover{box-shadow:0 6px 16px rgba(15,92,99,.25)}button:active{transform:scale(.97)}button.alt{background:#fff;color:var(--pri)}
+button.icon{min-height:46px;width:46px;padding:0;background:#fff;color:var(--ink);border-color:var(--line)}button.icon[aria-pressed=true]{background:var(--sun);border-color:var(--sun)}
+:focus-visible{outline:4px solid #e08a00;outline-offset:3px}
+.seg{display:flex;gap:4px;padding:5px;margin:2px auto 14px;width:min(460px,calc(100% - 28px));background:#e6e0d3;border-radius:99px}
+.seg button{flex:1;min-height:48px;border:0;border-radius:99px;background:transparent;color:var(--ink);box-shadow:none}.seg button[aria-current=page]{background:#fff;color:var(--pri2);box-shadow:var(--sh)}
+#st{text-align:center;font-weight:700;padding:0 14px;min-height:1px}
+main{max-width:1060px;margin:auto;padding:6px clamp(14px,4vw,32px) 20px}
+.grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(310px,1fr))}.span{grid-column:1/-1}
+.card{background:#fff;border-radius:var(--r);padding:24px;box-shadow:var(--sh)}.mute{color:var(--mute)}.ok{color:var(--ok)}.bad{color:var(--bad)}.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.hero{background:linear-gradient(135deg,#0b464c,#0f5c63 55%,#2d8f86);color:#fff;display:flex;gap:20px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.hero .kick{opacity:.85;font-size:.9rem}.hero h2{font-size:clamp(1.7rem,5vw,2.4rem);margin:2px 0 12px}.hero .nx{background:rgba(255,255,255,.14);border-radius:18px;padding:12px 18px}.hero .nx small{display:block;opacity:.85}.hero .nx b{font-size:1.5rem}
+.tiles{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.tile{display:flex;flex-direction:column;align-items:stretch;text-align:left;gap:10px;padding:0;overflow:hidden;min-height:0;border:0;color:#fff;border-radius:22px}
+.tile .art{display:block;padding:14px 14px 0}.tile .art svg{width:100%;height:92px;display:block}.tile .tt{padding:0 18px}.tile .tt b{display:block;font-size:1.15rem}.tile .tt small{opacity:.9}.tile .stars{padding:0 18px 16px;letter-spacing:3px;color:#ffd36b}
+.tile.rec{background:linear-gradient(150deg,#0f5c63,#2d8f86)}.tile.fam{background:linear-gradient(150deg,#e9a312,#f7cf72);color:#2a1d00}.tile.fam .stars{color:#7a4a00}.tile.ev{background:linear-gradient(150deg,#5b2a86,#8a55c2)}
+.task{display:flex;gap:14px;align-items:center;padding:12px 0;border-bottom:1.5px solid #eee9de}.task:last-of-type{border:0}
+.task input{width:34px;height:34px;accent-color:var(--pri);flex:none}.task time{font-weight:700;background:var(--soft);color:var(--pri2);border-radius:10px;padding:2px 10px}.task.d .tx{text-decoration:line-through;color:var(--mute)}
+.pill{font-size:.75rem;font-weight:700;border-radius:99px;padding:2px 10px;background:#eee;margin-left:auto}.pill.ok{background:#dff2e6}.pill.bad{background:#fbdedb}
+.glasses{display:flex;gap:6px;margin:6px 0 14px}.gl{width:22px;height:34px;border:2.5px solid #7fb7c8;border-radius:4px 4px 9px 9px;background:#fff}.gl.f{background:linear-gradient(#bfe6f2,#5aaed0)}
+.bar{height:12px;background:#e8e3d8;border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,#2d8f86,#1d7a46);border-radius:9px}
+.ph .phrow{display:flex;gap:16px;align-items:center;flex-wrap:wrap}.ph .face{width:76px;height:76px}.ph h2{margin:0}.badge{margin-left:auto;font-weight:700;border-radius:99px;padding:4px 14px}.badge.gd{background:#dff2e6;color:var(--ok)}.badge.bd{background:#fbdedb;color:var(--bad)}
+.tiles3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}.st{background:#f6f3ec;border-radius:18px;padding:12px;text-align:center;font-size:.85rem}.st b{display:block;font:700 2rem Fraunces,Georgia,serif}
+.lg{font-size:.85rem;font-weight:700;margin-top:6px}
+.alert{display:flex;gap:12px;align-items:center;border-radius:16px;background:#fdeceb;border-left:6px solid var(--bad);padding:10px 14px;margin-bottom:10px}.alert .ai{font-size:1.5rem}.alert button{margin-left:auto;min-height:42px;padding:4px 14px}
+.act{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1.5px solid #eee9de}.act i{width:12px;height:12px;border-radius:50%;flex:none}
+.hms{display:grid;gap:14px}.hm{display:grid;grid-template-columns:1fr 100px;gap:4px 12px;align-items:center}.hm .bar{grid-column:1/-1}.hm small{grid-column:1/-1;color:var(--mute)}.hm input{width:100%;padding:6px 10px}
+.gcard{max-width:600px;margin:0 auto;text-align:center}.gtop{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.gtop button{min-height:44px;padding:4px 16px}
+.dots{display:flex;gap:6px;justify-content:center}.dots i{width:30px;height:8px;border-radius:9px;background:#e1dbcd}.dots i.on{background:var(--pri)}.dots i.cur{background:var(--sun)}
+.face{width:190px;height:190px;border-radius:50%;object-fit:cover;display:block;margin:14px auto;box-shadow:0 0 0 6px #fff,0 0 0 9px var(--soft)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}.opts button,.evs button{background:#fff;color:var(--ink);border:2.5px solid var(--line);text-align:left;display:flex;gap:10px;align-items:center}
+.opts button i,.evs button i{font-style:normal;flex:none;width:30px;height:30px;border-radius:9px;background:var(--soft);color:var(--pri2);display:grid;place-items:center;font-size:.9rem}
+.opts button.r{background:var(--ok);border-color:var(--ok);color:#fff}.opts button.w{border-color:var(--bad);color:var(--bad)}.evs{display:grid;gap:10px;margin-top:14px}.evs button.p{background:var(--ok);border-color:var(--ok);color:#fff}
+.fb{font-weight:700;min-height:2.2em;margin:14px 0 6px}
+#sosbar{position:fixed;left:0;right:0;bottom:0;padding:26px 14px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(transparent,var(--bg) 40%);pointer-events:none}
+#sosbar button{pointer-events:auto;display:block;margin:auto;width:min(520px,100%);min-height:64px;font-size:1.2rem;border-radius:22px;background:var(--bad);border-color:var(--bad);box-shadow:0 10px 24px rgba(179,49,43,.38)}
+#modal{position:fixed;inset:0;background:rgba(10,25,30,.6);display:none;align-items:center;justify-content:center;padding:20px;z-index:9;backdrop-filter:blur(3px)}#modal.on{display:flex}
+.mcard{background:#fff;border-radius:28px;padding:28px;max-width:440px;width:100%;text-align:center}.mcard .mi{font-size:3rem}.mcard p{font:700 1.5rem Fraunces,Georgia,serif;margin:8px 0 18px}.mcard .row{justify-content:center}
+.pcards{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(290px,1fr))}
+.pc{display:flex;gap:12px;align-items:center;text-align:left;background:#f8f5ee;color:var(--ink);border:2.5px solid transparent;border-radius:20px;padding:12px 14px;min-height:0}
+.pc.sel{border-color:var(--pri);background:var(--soft)}.pc .face{width:54px;height:54px;margin:0;box-shadow:none;flex:none}.pc .pi{display:flex;flex-direction:column;flex:1;min-width:0}.pc small{color:var(--mute)}
+.mini{display:flex;gap:10px;flex-wrap:wrap;font-size:.8rem}.mini em{font-style:normal;font-weight:700}.pc .badge{margin-left:0;font-size:.85rem}
+@media(max-width:520px){.opts{grid-template-columns:1fr}.hm{grid-template-columns:1fr 90px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head><body>
+<header class="top"><div class="brand"><svg viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="14" fill="#0f5c63"/><path d="M24 36s-11-6.5-11-15a6.5 6.5 0 0 1 11-4.6A6.5 6.5 0 0 1 35 21c0 8.5-11 15-11 15z" fill="#ffd36b"/><path d="M17 22h5l2-4 3 8 2-4h2" stroke="#0f5c63" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><div><h1 id="hT"></h1><small id="hS"></small></div></div>
+<div class="tools"><span class="chip" id="bNet"></span><span class="chip" id="bBh"></span><button class="icon" id="vc" aria-pressed="false" aria-label="Voice guide">🔊</button><select id="lang" aria-label="Language"></select></div></header>
+<nav id="nav" class="seg"></nav><div id="st" role="status" aria-live="polite"></div><main id="m"></main>
+<div id="sosbar"><button id="sos"></button></div>
+<div id="modal" role="alertdialog"><div class="mcard"><div class="mi">🔔</div><p id="mT"></p><div class="row"><button id="mY"></button><button class="alt" id="mN"></button></div></div></div>
+<script>
+/* ===== text packs: English + Mizo bundled offline; other languages come from Bhashini via /api/translate ===== */
+const T={en:{title:"Memory-Care NE",gm:"Good morning",welcome:"Welcome",pts:"Patients",search:"Search patients",addp:"Add patient",nores:"No patient found",demo:"Patients 2 and 3 are sample demo records.",ga:"Good afternoon",ge:"Good evening",stable:"Stable",attn:"Needs attention",prog:"Today's progress",sub:"Cognitive growth & memory rehabilitation",elder:"Elder App",care:"Caregiver",hello:"Welcome, Usha Aunty",next:"Up next",none:"All tasks done today",
+games:"Mind games",g_rec:"Cultural recall",g_rec_d:"Festivals, rivers and dances",g_fam:"Family faces",g_fam_d:"Who is this?",g_ev:"Life events",g_ev_d:"Put events in order",level:"Level",round:"Round",score:"Score",
+routines:"Daily routines",add:"Add",what:"What to remember",water:"Drink water",med:"Take your medicine",walk:"Morning walk",call:"Call with family",done:"Done",missed:"Missed",pending:"Pending",glass:"I drank a glass of water",
+who:"Who is this?",order:"Tap the events from oldest to newest",right:"Correct! Well done.",wrong:"Not quite. That is okay.",nextq:"Next",again:"Play again",back:"Back",lvlup:"Moving to a harder level",lvldn:"Moving to an easier level",
+sos:"SOS · CALL NOW",sosq:"Alert your caregiver now?",yes:"Yes, alert",no:"Cancel",sosok:"Your caregiver has been alerted.",sosdemo:"Demo mode: no real message was sent.",sosfail:"Could not send the alert. Please call your caregiver.",
+trends:"Cognitive performance trends",memory:"Memory",attention:"Attention",problem:"Problem solving",nodata:"Play games to see trends",activity:"Recent activity",health:"Daily health metrics",steps:"Steps",sleep:"Sleep (hours)",waterl:"Water (glasses)",
+alerts:"Active alerts",noalerts:"No alerts. Everything is on track.",ack:"Reviewed",ma:"Missed reminder",drop:"Sudden drop in game performance",notes:"Caregiver notes",famadd:"Add family member",name:"Name",rel:"Relation",photo:"Photo (optional)",save:"Save",
+daughter:"Daughter",son:"Son",husband:"Husband",friend:"Friend",ev1:"Was born",ev2:"Started school",ev3:"Got married",ev4:"First child was born",ev5:"Retired from work",
+q1:"Chapchar Kut is a festival of which state?",q2:"Bihu is mainly celebrated in which state?",q3:"Which dance uses bamboo poles?",q4:"The Hornbill Festival is held in which state?",q5:"Teesta river flows through which state?",q6:"Loktak Lake is in which state?",
+offline:"Offline",online:"Online",bhon:"Bhashini ready",bhoff:"Bhashini not set up",trn:"Translating with Bhashini…",trf:"Bhashini translation failed",stay:"Showing the previous language.",sess:"games played"},
+lus:{title:"Memory-Care NE",gm:"Zing Chibai",welcome:"Chibai",pts:"Damlote",search:"Damlote zawng",addp:"Damlo belh",nores:"Damlo hmuh a ni lo",demo:"Damlote 2 leh 3 hi sample demo a ni.",ga:"Chhun Chibai",ge:"Tlai Chibai",stable:"A ṭha",attn:"Enfiah a ngai",prog:"Vawiin kal zawh",sub:"Rilru thiamna leh hriatrengna siamṭhatna",elder:"Upa App",care:"Enkawltu",hello:"Chibai, Pi Usha",next:"A zawng",none:"Vawiin thiltih zawng a zo",
+games:"Rilru khelh",g_rec:"Mizo hnam thil hriat",g_rec_d:"Kut, lui leh lam",g_fam:"Chhungte hmêl",g_fam_d:"Hei hi tu nge?",g_ev:"Nunna thilthleng",g_ev_d:"Thilthleng tihdan zawm rawh",level:"Level",round:"Round",score:"Point",
+routines:"Nitin thiltih",add:"Belh",what:"Hriat reng tur",water:"Tui in rawh",med:"Damdawi ei rawh",walk:"Zing lama kal vak",call:"Chhungkua nen ṭawng",done:"A zo",missed:"A bo",pending:"A la awm",glass:"Tui no khat ka in",
+who:"Hei hi tu nge?",order:"Thilthleng hi a hmasa ber atanga hmet rawh",right:"A dik! A ṭha hle.",wrong:"A pawi lo, ti leh rawh.",nextq:"A tuk",again:"Khelh nawn",back:"Haw",lvlup:"Level harsa zawk-ah kal ang",lvldn:"Level awlsam zawk-ah kal ang",
+sos:"SOS · NGHAL HAWH",sosq:"Enkawltu hriattir nghal ang maw?",yes:"Aw, hriattir",no:"Dah bo",sosok:"I enkawltu hriattir a ni.",sosdemo:"Demo: thuchah dik tak thawn a ni lo.",sosfail:"Thawn theih a ni lo. I enkawltu be rawh.",
+trends:"Rilru thiamna kal dan",memory:"Hriatreng",attention:"Ngaihtuahna",problem:"Harsatna sutkian",nodata:"Khelh a ngai",activity:"A hnuhnung thiltih",health:"Nitin hriselna",steps:"Kal tehna",sleep:"Zan muhil (darkar)",waterl:"Tui (no)",
+alerts:"Alert",noalerts:"Alert a awm lo. Engkim a ṭha.",ack:"Ka en tawh",ma:"Hriattirna a bo",notes:"Enkawltu thuziak",famadd:"Chhungte belh",name:"Hming",rel:"Inkaihhnawih",photo:"Thlalak (duh chuan)",save:"Dah",
+daughter:"Fanu",son:"Fapa",husband:"Pasal",friend:"Thian",ev1:"Piang",ev2:"Kum sikul kal",ev3:"Innei",ev4:"Fa hmasa piang",ev5:"Hnathawh bang",
+q1:"Chapchar Kut hi eng state kut nge?",q2:"Bihu hi eng state-ah nge hman ber?",q3:"Mau hmanga lam hi eng nge ni?",q4:"Hornbill Festival hi eng state-ah nge neih?",q5:"Teesta lui hi eng state-ah nge luang?",q6:"Loktak Lake hi eng state-ah nge awm?",
+offline:"Internet nei lo",online:"Internet nei",bhon:"Bhashini ready",bhoff:"Bhashini set a ni lo"}};
+const LANGS=[["en","English","en-IN"],["lus","Mizo (offline)","en-IN"],["hi","हिन्दी","hi-IN"],["as","অসমীয়া","as-IN"],["brx","बड़ो","hi-IN"],["mni","মৈতৈলোন্","hi-IN"],["ne","नेपाली","ne-NP"],["bn","বাংলা","bn-IN"],["ta","தமிழ்","ta-IN"],["te","తెలుగు","te-IN"]];
+const QS=[{q:"q1",a:"Mizoram",w:["Kerala","Punjab","Goa"]},{q:"q2",a:"Assam",w:["Mizoram","Kerala","Goa"]},{q:"q3",a:"Cheraw",w:["Garba","Bhangra","Bharatanatyam"]},{q:"q4",a:"Nagaland",w:["Goa","Kerala","Punjab"]},{q:"q5",a:"Sikkim",w:["Kerala","Punjab","Goa"]},{q:"q6",a:"Manipur",w:["Goa","Kerala","Gujarat"]}];
+const PAL=[["#e0b08a","#2b1d16","#bfe3e6"],["#c99872","#1b1b1b","#f3dfb3"],["#d9a984","#9aa3a8","#d6d3ee"],["#b98560","#4a2f20","#f1cfc8"]];
+/* ===== state (offline-first: everything lives on the device; the native build uses SQLite) ===== */
+let S={lang:"en",view:"elder",voice:false,water:2,steps:3800,sleep:7.3,notes:"",ackd:[],sos:[],nid:20,
+ tasks:[{id:1,k:"med",t:"09:00",d:0},{id:2,k:"water",t:"10:30",d:0},{id:3,k:"walk",t:"11:30",d:0},{id:4,k:"call",t:"17:00",d:0}],
+ fam:[{n:"Anita",r:"daughter"},{n:"Rohan",r:"son"},{n:"Mohan",r:"husband"},{n:"Meera",r:"friend"}],
+ ev:[{k:"ev1",y:1950},{k:"ev2",y:1956},{k:"ev3",y:1972},{k:"ev4",y:1975},{k:"ev5",y:2010}],
+ hist:{rec:[],fam:[],ev:[]},lvl:{rec:1,fam:1,ev:1}};
+let TR={},BH=false;
+const F=["tasks","water","steps","sleep","notes","ackd","sos","fam","ev","hist","lvl"],clone=o=>JSON.parse(JSON.stringify(o)),FAMD=clone(S.fam),EVD=clone(S.ev);
+const mkT=a=>a.map((x,i)=>({id:i+1,k:x[0],t:x[1],d:x[2]})),mkH=a=>a.map((v,i)=>({a:v,l:1,ts:Date.now()-(a.length-i)*864e5}));
+const base=()=>({fam:clone(FAMD),ev:clone(EVD),ackd:[],sos:[],lvl:{rec:1,fam:1,ev:1}});
+const seed=()=>({UC02:{...base(),name:"Mrs. Gupta",tasks:mkT([["med","09:00",0],["water","10:30",0],["walk","11:30",1],["call","17:00",0]]),water:3,steps:2100,sleep:5.5,notes:"Missed water reminders this week.",hist:{rec:mkH([80,80,80,40]),fam:mkH([60,80,60]),ev:mkH([60,60])}},
+ UC03:{...base(),name:"Mrs. Maria",tasks:mkT([["med","09:00",1],["water","10:30",1],["walk","11:30",1],["call","17:00",0]]),water:7,steps:4600,sleep:7.8,notes:"Very engaged with the games.",hist:{rec:mkH([60,80,80,100]),fam:mkH([80,80,100]),ev:mkH([60,80,80])}}});
+try{Object.assign(S,JSON.parse(localStorage.getItem("mc2")||"{}"));TR=JSON.parse(localStorage.getItem("mc2tr")||"{}")}catch(e){}
+if(!S.pts||!S.pts[S.cur]){const o={name:"Usha Aunty"};F.forEach(f=>o[f]=S[f]);S.pts=Object.assign({UC01:o},seed());S.cur="UC01"}else F.forEach(f=>S[f]=S.pts[S.cur][f]);
+const cp=()=>S.pts[S.cur],snap=()=>{F.forEach(f=>S.pts[S.cur][f]=S[f]);return S.pts[S.cur]};
+function switchTo(id){if(!S.pts[id])return;snap();S.cur=id;F.forEach(f=>S[f]=S.pts[id][f])}
+function addPatient(n){if(!n)return;let i=Object.keys(S.pts).length+1,id;do{id="UC"+String(i++).padStart(2,"0")}while(S.pts[id]);
+ S.pts[id]={...base(),name:n,tasks:mkT([["med","09:00",0],["water","10:30",0],["walk","11:30",0],["call","17:00",0]]),water:0,steps:0,sleep:0,notes:"",hist:{rec:[],fam:[],ev:[]}};switchTo(id)}
+const lastGame=p=>{const a=[].concat(...["rec","fam","ev"].map(k=>p.hist[k])).sort((x,y)=>y.ts-x.ts);return a.length?a[0].a:null};
+const save=()=>{try{snap();localStorage.setItem("mc2",JSON.stringify(S))}catch(e){}};
+const $=i=>document.getElementById(i),esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const t=k=>(TR[S.lang]&&TR[S.lang][k])||(T[S.lang]&&T[S.lang][k])||T.en[k]||k;
+const lab=x=>x.k?t(x.k):esc(x.x),hm=()=>{const d=new Date();return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")};
+const stt=x=>x.d?"done":x.t<hm()?"missed":"pending",rnd=a=>a[Math.floor(Math.random()*a.length)],shuf=a=>a.slice().sort(()=>Math.random()-.5);
+function say(x){if(!S.voice)return;try{const u=new SpeechSynthesisUtterance(x);u.lang=(LANGS.find(l=>l[0]==S.lang)||[0,0,"en-IN"])[2];speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
+/* ===== pictures (inline SVG, no image files needed) ===== */
+function face(p,i){if(p.img)return `<img class="face" src="${p.img}" alt="${esc(p.n)}">`;const c=PAL[i%4];return `<svg class="face" viewBox="0 0 120 120" role="img" aria-label="${esc(p.n)}"><rect width="120" height="120" fill="${c[2]}"/><path d="M15 120c4-30 22-40 45-40s41 10 45 40z" fill="#0b4f6c"/><circle cx="60" cy="52" r="26" fill="${c[0]}"/><path d="M33 50c0-22 14-30 27-30s27 8 27 30c-6-12-16-16-27-16S39 38 33 50z" fill="${c[1]}"/><circle cx="50" cy="55" r="3"/><circle cx="70" cy="55" r="3"/><path d="M50 67q10 8 20 0" stroke="#222" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`}
+/* ===== views ===== */
+const ART={rec:`<svg viewBox="0 0 120 80" aria-hidden="true"><circle cx="94" cy="20" r="11" fill="#ffd36b"/><path d="M0 80V50l28-30 22 24 18-14 52 36V80z" fill="#0b464c"/><path d="M0 80V62l30-20 24 18 24-12 42 32V80z" fill="#3aa095"/><path d="M-5 74c30-8 45 6 70 0s40-6 60 2V80H-5z" fill="#a9e0ec"/></svg>`,
+fam:`<svg viewBox="0 0 120 80" aria-hidden="true"><circle cx="38" cy="30" r="14" fill="#f3c9a4"/><path d="M12 80c2-22 12-28 26-28s24 6 26 28z" fill="#a14b13"/><circle cx="80" cy="38" r="11" fill="#e0b08a"/><path d="M60 80c2-17 9-22 20-22s18 5 20 22z" fill="#0f5c63"/><circle cx="104" cy="54" r="8" fill="#f3c9a4"/><path d="M92 80c1-12 5-16 12-16s11 4 12 16z" fill="#5b2a86"/></svg>`,
+ev:`<svg viewBox="0 0 120 80" aria-hidden="true"><path d="M12 42H108" stroke="#fff" stroke-width="4" stroke-linecap="round"/><g fill="#ffd36b"><circle cx="20" cy="42" r="8"/><circle cx="50" cy="42" r="8"/><circle cx="80" cy="42" r="8"/><circle cx="104" cy="42" r="8"/></g><g fill="#fff" opacity=".85"><rect x="12" y="14" width="16" height="12" rx="3"/><rect x="42" y="58" width="16" height="12" rx="3"/><rect x="72" y="14" width="16" height="12" rx="3"/></g></svg>`};
+const ring=p=>{const c=2*Math.PI*36;return `<svg width="104" height="104" viewBox="0 0 90 90" role="img" aria-label="${Math.round(p*100)}%"><circle cx="45" cy="45" r="36" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="9"/><circle cx="45" cy="45" r="36" fill="none" stroke="#ffd36b" stroke-width="9" stroke-linecap="round" stroke-dasharray="${c*p} ${c}" transform="rotate(-90 45 45)"/><text x="45" y="52" text-anchor="middle" font-size="20" font-weight="700" fill="#fff">${Math.round(p*100)}%</text></svg>`};
+function tasks(){return S.tasks.slice().sort((a,b)=>a.t.localeCompare(b.t)).map(x=>{const s=stt(x);return `<div class="task ${x.d?"d":""}"><input type="checkbox" aria-label="${t("done")}" ${x.d?"checked":""} data-tog="${x.id}"><time>${x.t}</time><span class="tx">${lab(x)}</span><span class="pill ${s=="done"?"ok":s=="missed"?"bad":""}">${t(s)}</span></div>`}).join("")}
+const tile=(k,d)=>`<button class="tile ${k}" data-play="${k}"><span class="art">${ART[k]}</span><span class="tt"><b>${t(d[0])}</b><small>${t(d[1])}</small></span><span class="stars" aria-label="${t("level")} ${S.lvl[k]}">${"★".repeat(S.lvl[k])}${"☆".repeat(3-S.lvl[k])}</span></button>`;
+function elder(){const n=S.tasks.length,d=S.tasks.filter(x=>x.d).length,h=new Date().getHours(),nx=S.tasks.filter(x=>!x.d&&x.t>=hm()).sort((a,b)=>a.t.localeCompare(b.t))[0];
+return `<div class="grid"><section class="card hero span"><div><div class="kick">${t(h<12?"gm":h<17?"ga":"ge")} · ${new Date().toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"long"})}</div><h2>${t("welcome")}, ${esc(cp().name)}</h2><div class="nx"><small>${t("next")}</small><b>${nx?nx.t+" · "+lab(nx):t("none")}</b></div></div><div style="text-align:center">${ring(n?d/n:0)}<div class="kick">${t("prog")}</div></div></section>
+<section class="card span"><h2>${t("games")}</h2><div class="tiles">${tile("rec",["g_rec","g_rec_d"])}${tile("fam",["g_fam","g_fam_d"])}${tile("ev",["g_ev","g_ev_d"])}</div></section>
+<section class="card"><h2>${t("routines")}</h2>${tasks()}<form id="aF" class="row" style="margin-top:14px"><input id="aX" required placeholder="${t("what")}" aria-label="${t("what")}" style="flex:1;min-width:150px"><input id="aT" type="time" required value="${hm()}" aria-label="time"><button>${t("add")}</button></form></section>
+<section class="card"><h2>💧 ${t("water")}</h2><div class="glasses">${Array.from({length:8},(_,i)=>`<span class="gl ${i<S.water?"f":""}"></span>`).join("")}</div><button data-water>${t("glass")} · ${S.water}/8</button></section></div>`}
+function chart(){const ser=[["rec","memory","#0f5c63"],["fam","attention","#c98a0a"],["ev","problem","#7a3fb0"]];if(!ser.some(s=>S.hist[s[0]].length))return `<p class="mute">${t("nodata")}</p>`;const y=v=>118-v*1.04;
+return `<svg viewBox="0 0 320 140" style="width:100%" role="img" aria-label="${t("trends")}">${[0,50,100].map(v=>`<line x1="34" x2="312" y1="${y(v)}" y2="${y(v)}" stroke="#e6e1d6"/><text x="28" y="${y(v)+4}" text-anchor="end" font-size="10" fill="#4a5b62">${v}</text>`).join("")}`+ser.map(([k,,c])=>{const h=S.hist[k].slice(-7).map(x=>x.a);if(!h.length)return"";const X=i=>h.length>1?40+i*266/(h.length-1):173;return `<polyline fill="none" stroke="${c}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" points="${h.map((v,i)=>X(i)+","+y(v)).join(" ")}"/>`+h.map((v,i)=>`<circle cx="${X(i)}" cy="${y(v)}" r="4" fill="#fff" stroke="${c}" stroke-width="2.5"/>`).join("")}).join("")+`</svg><div class="row lg">${ser.map(([,n,c])=>`<span style="color:${c}">● ${t(n)}</span>`).join("")}</div>`}
+function alertsList(p=snap()){const a=[];p.tasks.filter(x=>stt(x)=="missed"&&!p.ackd.includes("m"+x.id)).forEach(x=>a.push(["m"+x.id,`${t("ma")}: ${lab(x)} (${x.t})`]));
+["rec","fam","ev"].forEach(k=>{const h=p.hist[k].map(x=>x.a);if(h.length>=3){const l=h[h.length-1],av=h.slice(0,-1).reduce((s,x)=>s+x,0)/(h.length-1);const id="d"+k+h.length;if(l<av-30&&!p.ackd.includes(id))a.push([id,`${t("drop")}: ${t({rec:"g_rec",fam:"g_fam",ev:"g_ev"}[k])}`])}});
+p.sos.forEach(s=>{if(!p.ackd.includes("s"+s))a.push(["s"+s,"SOS · "+new Date(s).toLocaleTimeString()])});return a}
+function patList(q=""){snap();q=q.toLowerCase();const ids=Object.keys(S.pts),rows=ids.filter(id=>(S.pts[id].name+" "+id).toLowerCase().includes(q));
+ return rows.length?rows.map(id=>{const p=S.pts[id],c={done:0,missed:0,pending:0};p.tasks.forEach(x=>c[stt(x)]++);const al=alertsList(p).length,lg=lastGame(p);
+ return `<button class="pc ${id==S.cur?"sel":""}" data-sel="${id}" aria-pressed="${id==S.cur}">${face({n:p.name},ids.indexOf(id))}<span class="pi"><b>${esc(p.name)}</b><small>ID ${id}</small><span class="mini"><em class="ok">✔ ${c.done}</em><em class="bad">✖ ${c.missed}</em><em>⏳ ${c.pending}</em>${lg!=null?`<em>🎮 ${lg}%</em>`:""}</span></span><span class="badge ${al?"bd":"gd"}">${al?"⚠ "+al:"●"}</span></button>`}).join(""):`<p class="mute">${t("nores")}</p>`}
+const overview=()=>`<section class="card span"><div class="row" style="justify-content:space-between"><h2 style="margin:0">${t("pts")} (${Object.keys(S.pts).length})</h2><input id="ps" type="search" placeholder="${t("search")}" aria-label="${t("search")}" style="min-width:220px"></div><div class="pcards" id="pl" style="margin-top:14px">${patList()}</div><form id="pF" class="row" style="margin-top:16px"><input id="pN" required placeholder="${t("name")}" aria-label="${t("name")}" style="flex:1;min-width:150px"><button>${t("addp")}</button></form><p class="mute" style="font-size:.8rem;margin:10px 0 0">${t("demo")}</p></section>`;
+function care(){const c={done:0,missed:0,pending:0};S.tasks.forEach(x=>c[stt(x)]++);const al=alertsList(),nm={rec:"g_rec",fam:"g_fam",ev:"g_ev"},col={rec:"#0f5c63",fam:"#c98a0a",ev:"#7a3fb0"};
+const act=[].concat(...["rec","fam","ev"].map(k=>S.hist[k].map(x=>({k,...x})))).sort((a,b)=>b.ts-a.ts).slice(0,5);
+const hmr=(lb,id,v,g,st)=>`<label class="hm"><span>${lb}</span><input type="number" min="0" step="${st}" id="${id}" value="${v}"><div class="bar"><i style="width:${Math.min(100,v/g*100)}%"></i></div><small>/ ${g}</small></label>`;
+return `<div class="grid">${overview()}<section class="card span ph"><div class="phrow">${face({n:cp().name},Object.keys(S.pts).indexOf(S.cur))}<div><h2>${esc(cp().name)}</h2><div class="mute">ID ${S.cur}</div></div><span class="badge ${al.length?"bd":"gd"}">${al.length?"⚠ "+t("attn"):"● "+t("stable")}</span></div>
+<div class="tiles3"><div class="st ok"><b>${c.done}</b>${t("done")}</div><div class="st bad"><b>${c.missed}</b>${t("missed")}</div><div class="st"><b>${c.pending}</b>${t("pending")}</div></div></section>
+<section class="card"><h2>${t("trends")}</h2>${chart()}</section>
+<section class="card"><h2>${t("alerts")}</h2>${al.length?al.map(a=>`<div class="alert"><span class="ai">${a[0][0]=="s"?"🚨":a[0][0]=="d"?"📉":"⏰"}</span><span>${esc(a[1])}</span><button class="alt" data-ack="${a[0]}">${t("ack")}</button></div>`).join(""):`<p class="ok"><b>✔ ${t("noalerts")}</b></p>`}
+<h3>${t("activity")}</h3>${act.length?act.map(x=>`<div class="act"><i style="background:${col[x.k]}"></i><span>${t(nm[x.k])}</span><b style="margin-left:auto">${x.a}%</b><span class="mute">· ${t("level")} ${x.l}</span></div>`).join(""):`<p class="mute">${t("nodata")}</p>`}</section>
+<section class="card"><h2>${t("health")}</h2><div class="hms">${hmr(t("steps"),"hSt",S.steps,5000,100)}${hmr(t("sleep"),"hSl",S.sleep,8,.1)}${hmr(t("waterl"),"hW",S.water,8,1)}</div></section>
+<section class="card"><h2>${t("notes")}</h2><textarea id="nt" rows="5" style="width:100%">${esc(S.notes)}</textarea></section>
+<section class="card span"><h2>${t("famadd")}</h2><form id="fF" class="row"><input id="fN" required placeholder="${t("name")}" aria-label="${t("name")}" style="flex:1;min-width:140px"><select id="fR" aria-label="${t("rel")}">${["daughter","son","husband","friend"].map(r=>`<option value="${r}">${t(r)}</option>`).join("")}</select><label class="mute">${t("photo")} <input type="file" id="fP" accept="image/*"></label><button>${t("save")}</button></form>
+<div class="row" style="margin-top:14px;gap:18px">${S.fam.map((p,i)=>`<div style="text-align:center;width:84px">${face(p,i).replace('class="face"','class="face" style="width:72px;height:72px;margin:0 auto 4px;box-shadow:none"')}<small>${esc(p.n)}</small></div>`).join("")}</div></section></div>`}
+/* ===== games with live adaptive difficulty ===== */
+let G=null;
+function start(k){G={k,i:0,sc:0,win:[],mist:0,sel:[],fb:"",rounds:5,done:false};nq()}
+function nq(){const L=S.lvl[G.k];G.sel=[];G.mist=0;G.fb="";G.locked=false;
+ if(G.k=="rec"){const q=rnd(QS);G.q={q:q.q,a:q.a,o:shuf([q.a,...shuf(q.w).slice(0,L)])};say(t(q.q))}
+ else if(G.k=="fam"){const p=rnd(S.fam);G.q={p,o:shuf([p,...shuf(S.fam.filter(x=>x!==p)).slice(0,L)])};say(t("who"))}
+ else{const sub=shuf(S.ev).slice(0,Math.min(S.ev.length,L+2));G.q={show:shuf(sub),ord:sub.slice().sort((a,b)=>a.y-b.y)};say(t("order"))}}
+function finish(ok){if(ok)G.sc++;G.win.push(ok);const L=S.lvl[G.k],l3=G.win.slice(-3);let m="";
+ if(l3.length==3&&l3.every(x=>x)&&L<3){S.lvl[G.k]++;G.win=[];m=" "+t("lvlup")}else if(l3.filter(x=>!x).length>=2&&L>1){S.lvl[G.k]--;G.win=[];m=" "+t("lvldn")}
+ G.fb=(ok?"✅ "+t("right"):"💛 "+t("wrong"))+m;G.locked=true;say(G.fb);
+ if(G.i+1>=G.rounds)S.hist[G.k].push({a:Math.round(G.sc/G.rounds*100),l:S.lvl[G.k],ts:Date.now()})}
+function gameView(){const k=G.k,L="ABCD";if(G.i>=G.rounds)return `<section class="card gcard"><div style="font-size:3.5rem">${G.sc>=G.rounds*.6?"🌟":"💛"}</div><h2>${t("score")}: ${G.sc}/${G.rounds}</h2><div class="bar"><i style="width:${G.sc/G.rounds*100}%"></i></div><p class="row" style="justify-content:center;margin-top:18px"><button data-play="${k}">${t("again")}</button><button class="alt" data-exit>${t("back")}</button></p></section>`;
+ let body="";const q=G.q;
+ if(k=="rec")body=`<h2>${t(q.q)}</h2><div class="opts">${q.o.map((o,i)=>`<button data-a="${esc(o)}"><i>${L[i]}</i>${esc(o)}</button>`).join("")}</div>`;
+ else if(k=="fam")body=`<h2>${t("who")}</h2>${face(q.p,S.fam.indexOf(q.p))}<div class="opts">${q.o.map((o,i)=>`<button data-a="${esc(o.n)}"><i>${L[i]}</i>${esc(o.n)}</button>`).join("")}</div>`;
+ else body=`<h2>${t("order")}</h2><div class="evs">${q.show.map(e=>`<button data-e="${e.k}" class="${G.sel.includes(e.k)?"p":""}"><i>${G.sel.includes(e.k)?G.sel.indexOf(e.k)+1:"•"}</i>${t(e.k)}</button>`).join("")}</div>`;
+ return `<section class="card gcard"><div class="gtop"><button class="alt" data-exit>‹ ${t("back")}</button><span class="mute"><b>${t("level")} ${S.lvl[k]}</b> · ${t("score")} ${G.sc}</span></div><div class="dots" aria-label="${t("round")} ${G.i+1}/${G.rounds}">${Array.from({length:G.rounds},(_,i)=>`<i class="${i<G.i?"on":i==G.i?"cur":""}"></i>`).join("")}</div>${body}<p class="fb" role="status">${G.fb}</p>${G.locked?`<button data-nq>${t("nextq")} ›</button>`:""}</section>`}
+function ans(v,b){if(G.locked)return;const ok=G.k=="rec"?v==G.q.a:v==G.q.p.n;finish(ok);render();
+ document.querySelectorAll("[data-a]").forEach(x=>{if(x.dataset.a==(G.k=="rec"?G.q.a:G.q.p.n))x.classList.add("r");else if(x.dataset.a==v)x.classList.add("w")})}
+function evTap(k){if(G.locked||G.sel.includes(k))return;if(G.q.ord[G.sel.length].k==k){G.sel.push(k);if(G.sel.length==G.q.ord.length)finish(G.mist==0);render()}else{G.mist++;G.fb="💛 "+t("wrong");render()}}
+/* ===== shell ===== */
+function render(){document.documentElement.lang=S.lang;document.title=t("title");$("hT").textContent=t("title");$("hS").textContent=t("sub");$("sos").textContent="🚨 "+t("sos");$("lang").value=S.lang;$("vc").setAttribute("aria-pressed",S.voice);
+ $("bNet").textContent=navigator.onLine?t("online"):t("offline");$("bNet").className="chip "+(navigator.onLine?"g":"");$("bBh").textContent=BH?t("bhon"):t("bhoff");$("bBh").className="chip "+(BH?"g":"");
+ $("nav").innerHTML=["elder","care"].map(v=>`<button data-v="${v}" ${S.view==v?'aria-current="page"':""}>${v=="elder"?"🏠":"🩺"} ${t(v)}</button>`).join("");
+ $("m").innerHTML=S.view=="care"?care():(G?gameView():elder());save()}
+document.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const d=b.dataset;
+ if(d.v){S.view=d.v;G=null}else if(d.play)start(d.play);else if(d.exit!==undefined)G=null;else if(d.sel){switchTo(d.sel);G=null}else if(d.nq!==undefined){G.i++;if(G.i<G.rounds)nq()}
+ else if(d.a!==undefined)return ans(d.a,b);else if(d.e)return evTap(d.e);else if(d.water!==undefined)S.water++;
+ else if(d.ack){S.ackd.push(d.ack)}else if(b.id=="vc"){S.voice=!S.voice;b.setAttribute("aria-pressed",S.voice);if(S.voice)say(t("title"))}else return;render()});
+document.addEventListener("change",e=>{const x=e.target;if(x.dataset.tog){S.tasks.find(y=>y.id==x.dataset.tog).d=x.checked?1:0;render()}
+ else if(x.id=="lang")setLang(x.value);else if(x.id=="hSt"){S.steps=+x.value;save()}else if(x.id=="hSl"){S.sleep=+x.value;save()}else if(x.id=="hW"){S.water=+x.value;save()}else if(x.id=="nt"){S.notes=x.value;save()}});
+document.addEventListener("submit",async e=>{e.preventDefault();
+ if(e.target.id=="pF"){addPatient($("pN").value.trim());render()}else if(e.target.id=="aF"){S.tasks.push({id:S.nid++,x:$("aX").value.trim(),t:$("aT").value,d:0});render()}
+ else if(e.target.id=="fF"){const p={n:$("fN").value.trim(),r:$("fR").value},f=$("fP").files[0];
+  if(f){try{p.img=await new Promise((ok,no)=>{const im=new Image();im.onload=()=>{const c=document.createElement("canvas");c.width=c.height=200;const g=c.getContext("2d"),s=Math.min(im.width,im.height);g.drawImage(im,(im.width-s)/2,(im.height-s)/2,s,s,0,0,200,200);ok(c.toDataURL("image/jpeg",.7))};im.onerror=no;im.src=URL.createObjectURL(f)})}catch(x){}}
+  S.fam.push(p);render()}});
+$("nav").addEventListener("click",()=>{});
+document.addEventListener("input",e=>{if(e.target.id=="ps")$("pl").innerHTML=patList(e.target.value)});
+$("sos").onclick=()=>{$("mT").textContent=t("sosq");$("mY").textContent=t("yes");$("mN").textContent=t("no");$("modal").classList.add("on");$("mN").focus()};
+$("mN").onclick=()=>$("modal").classList.remove("on");
+$("mY").onclick=async()=>{$("modal").classList.remove("on");S.sos.push(Date.now());let m;
+ try{const r=await fetch("/api/sos",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({patient:cp().name,message:"pressed SOS"})});const j=await r.json();if(!r.ok)throw 0;m=j.simulated?t("sosdemo"):t("sosok")}catch(e){m=t("sosfail")}
+ $("st").textContent="🚨 "+m;say(m);render()};
+/* ===== reminders ===== */
+const fired=new Set();setInterval(()=>{const n=hm();S.tasks.forEach(x=>{const k=x.id+x.t;if(!x.d&&x.t==n&&!fired.has(k)){fired.add(k);$("mT").textContent=lab(x);$("mY").textContent="✔ "+t("done");$("mN").textContent=t("no");$("modal").classList.add("on");say(lab(x));
+ $("mY").onclick=()=>{x.d=1;$("modal").classList.remove("on");$("mY").onclick=sosYes;render()}}});if(!G&&!$("modal").classList.contains("on")&&!document.activeElement.matches("input,select,textarea"))render()},20000);
+const sosYes=$("mY").onclick;
+/* ===== Bhashini language switching ===== */
+$("lang").innerHTML=LANGS.map(l=>`<option value="${l[0]}">${l[1]}</option>`).join("");
+async function setLang(l){const st=$("st");st.textContent="";const prev=S.lang;
+ if(T[l]||TR[l]){S.lang=l;return render()}
+ st.textContent=t("trn");$("lang").disabled=true;
+ try{const keys=Object.keys(T.en),r=await fetch("/api/translate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({target:l,texts:keys.map(k=>T.en[k])})});
+  const tx=await r.text();let j;try{j=JSON.parse(tx)}catch(x){throw new Error("The page is not being served by server.js (got HTTP "+r.status+" with no data). Run: node --env-file=.env server.js and open http://localhost:3000")}if(!r.ok)throw new Error(j.error||"HTTP "+r.status);
+  TR[l]=Object.fromEntries(keys.map((k,i)=>[k,j.translations[i]]));try{localStorage.setItem("mc2tr",JSON.stringify(TR))}catch(e){}S.lang=l;st.textContent=""}
+ catch(e){S.lang=prev;st.textContent="⚠ "+t("trf")+": "+e.message+". "+t("stay")}
+ $("lang").disabled=false;render()}
+fetch("/api/health").then(r=>r.json()).then(j=>{BH=j.bhashini;render()}).catch(()=>{});
+addEventListener("online",render);addEventListener("offline",render);
+if(S.lang!="en"&&!T[S.lang]&&!TR[S.lang]){const l=S.lang;S.lang="en";setLang(l)}else render();
+</script></body></html>
